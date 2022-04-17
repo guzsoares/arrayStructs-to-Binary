@@ -24,7 +24,7 @@ int main(void){
   char * descritor = "iis03u";
   FILE *arquivo = fopen("arquivo.bin", "wb");
   if(!arquivo){
-    printf("Erro ao abrir arquivo\n");
+    fprintf("Erro ao abrir arquivo\n");
     exit(1);
   }
   int a = gravacomp(1,p,descritor, arquivo);
