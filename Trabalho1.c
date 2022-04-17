@@ -22,7 +22,7 @@ int string2num (char *s);
 int main(void){
   void *p;
   char * descritor = "iis03u";
-  FILE *arquivo = fopen("arquivo.txt", "wb");
+  FILE *arquivo = fopen("arquivo.bin", "wb");
   if(!arquivo){
     printf("Erro ao abrir arquivo\n");
     exit(1);
