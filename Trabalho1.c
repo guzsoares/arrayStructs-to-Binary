@@ -51,9 +51,10 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
       //definir tipo = 0 ou 1
       
       //definir tamanho da string
-      char char_tamanho[2];
+      char char_tamanho[3];
       char_tamanho[0] = descritor[i+1];
       char_tamanho[1] = descritor[i+2];
+      char_tamanho[2] = '\0';
       int size = string2num(char_tamanho);
       tamanho_s = size %4;  //esse resultado que será impresso no arquivo 
       printf("de tamanho %d \n",tamanho_s);
