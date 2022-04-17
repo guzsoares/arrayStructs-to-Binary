@@ -27,7 +27,7 @@ int main(void){
     fprintf("Erro ao abrir arquivo\n");
     exit(1);
   }
-  int a = gravacomp(1,p,descritor, arquivo);
+  int a = gravacomp( 1, p, descritor, arquivo);
   return 0;
 }
 
