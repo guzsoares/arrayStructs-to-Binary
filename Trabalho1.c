@@ -21,7 +21,7 @@ int string2num (char *s);
 /****************************************************************************/
 int main(void){
   void *p;
-  char * descritor = "iis03u";
+  char * descritor = "iis03uus12i";
   FILE *arquivo = fopen("arquivo.bin", "wb");
   if(!arquivo){
     fprintf(arquivo ,"Erro ao abrir arquivo\n");
@@ -46,7 +46,7 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               char_tamanho[2] = '\0';
               int size = string2num(char_tamanho);
               
-              tamanho_s = size %4;
+              tamanho_s = size;
               //esse resultado que será impresso no arquivo
               
               
