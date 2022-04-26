@@ -33,10 +33,18 @@ int main(void){
 }
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
-  // da pra fazer ao inves de um "for", um "while(descritor[i] != '\0')"
-  int tamanho_s = 0;
+    
+    int tamanho_s = 0;
+    unsigned char PrimeiroByte;     // Quantidade de structs armazenadas
+    unsigned int ContByte;          // Indica se eh o ultimo da estrutura
+    unsigned int TypeByte;          // Caso seja um char devera conter 1 e caso seja um int devera conter 00 se eh unsigned e 01 se eh signed
+    unsigned int SizeByte;          // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
+    unsigned char StringByte;       // Usado para gravar os bytes que compoem a string
+    unsigned char IntByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
+    
   for (int i = 0; i < strlen(descritor); i++){
     // string acompanha s00, int i, unsigned u, ou seja string 3 char int 1 char e unsigned 1 char
+      
       switch (descritor[i]){
           case 115: // ASCII table s = 115, i = 105, u = 117
               printf("Achei uma string ");
