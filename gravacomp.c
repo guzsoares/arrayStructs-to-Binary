@@ -57,8 +57,11 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               fwrite(AuxByte,sizeof(unsigned char),sizeByte, arquivo);
               if (descritor[i-1] != 's'){
                   ContaPadding = FixPadding(tamanho_s);
+                  AuxByte += ContaPadding;
               }
-              AuxByte += ContaPadding;
+              else{
+                  AuxByte+= tamanho_s;
+              }
               ContaPadding = 0;
               i+=2;
               break;
