@@ -22,6 +22,7 @@ int string2num (char *s);
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   
+  unsigned char aux1;
   unsigned int ValueUnsigned; // Valores guardados no unsigned
   int ValueInt; // Valores guardados no signed
   unsigned char * AuxByte = (unsigned char *) valores; // Pegando os Bytes dos valores da struct
@@ -60,6 +61,11 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
             sizeByte =  sizeSigned(ValueInt);
             HeaderMontado = intHeader(ContByte,sizeByte,1);
             fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
+            while(sizeByte){
+              aux1 = ((ValueInt)>>(8*(sizeByte-1))); // big endian
+              fwrite(&aux1,sizeof(unsigned char),1,arquivo);
+              sizeByte--;
+            }
             break;
 
           case 'u':
@@ -67,6 +73,11 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
             sizeByte = sizeUnsigned(ValueUnsigned);
             HeaderMontado = intHeader(ContByte,sizeByte,0);
             fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
+            while(sizeByte){
+              aux1 = ((ValueUnsigned)>>(8*(sizeByte-1))); // big endian
+              fwrite(&aux1,sizeof(unsigned char),1,arquivo);
+              sizeByte--;
+            }
             break;   
       }
     }
