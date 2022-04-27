@@ -21,7 +21,7 @@ int string2num (char *s);
 
 // Funções para o cabeçalho
 
-unsigned char SignedIntHeader (unsigned char ContByte, int Value, unsigned char size);
+unsigned char IntHeader (unsigned char ContByte, int Value, unsigned char size, int isSigned);
 unsigned char UnsignedIntHeader (unsigned char ContByte, unsigned int Value, unsigned char size);
 unsigned char StringHeader (unsigned char ContByte, unsigned char size);
 
@@ -90,18 +90,25 @@ int string2num (char *s) {
   return a;
 }
 
-unsigned char SignedIntHeader (unsigned char ContByte, int Value, unsigned char size){
+unsigned char IntHeader (unsigned char ContByte, int Value, unsigned char size, int IsSigned){
   unsigned char aux = 0; // 00000000
   aux = aux | size;
   if (ContByte == 1){
     aux = aux | (1<<7);
   }
-  aux = aux | (1<<5);
-  aux = aux & (0<<6);
-  return aux;
+  if (IsSigned){
+    aux = aux | (1<<5);
+    aux = aux & (0<<6);
+    return aux;
+  }
+  else{
+    aux = aux & (0<<6);
+    aux = aux & (0<<5);
+    return aux;
+  }
 }
 
-unsigned char UnsignedIntHeader (unsigned char ContByte, unsigned int Value, unsigned char size){
+/*unsigned char UnsignedIntHeader (unsigned char ContByte, unsigned int Value, unsigned char size){
   unsigned char aux = 0;
   aux = aux | size;
   if (ContByte == 1){
@@ -110,4 +117,4 @@ unsigned char UnsignedIntHeader (unsigned char ContByte, unsigned int Value, uns
   aux = aux & (0<<6);
   aux = aux & (0<<5);
   return aux;
-}
+}*/
