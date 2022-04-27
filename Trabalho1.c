@@ -118,3 +118,13 @@ unsigned char IntHeader (unsigned char ContByte, int Value, unsigned char size, 
   aux = aux & (0<<5);
   return aux;
 }*/
+
+unsigned char StringHeader (unsigned char ContByte, unsigned char size){
+  unsigned char aux = 0;
+  aux = aux | size;
+  if (ContByte == 1){
+    aux = aux | (1<<7);
+  }
+  aux = aux | (1<<6);
+  return aux;
+}
