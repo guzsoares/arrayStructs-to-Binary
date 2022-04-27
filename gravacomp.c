@@ -21,7 +21,7 @@ int string2num (char *s);
 
 // Funções para o cabeçalho
 
-unsigned char IntHeader (unsigned char ContByte, int Value, unsigned char size, int isSigned);
+unsigned char IntHeader (unsigned char ContByte, unsigned char size, int isSigned);
 unsigned char StringHeader (unsigned char ContByte, unsigned char size);
 
 /****************************************************************************/
@@ -60,10 +60,10 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               break;
           case 'i':
               printf("Achei um int \n");
-              unsigned char ByteMontado = IntHeader(ContByte,ValueByte,sizeByte,1);
+              unsigned char ByteMontado = IntHeader(ContByte,sizeByte,1);
               break;
           case 'u':
-              unsigned char ByteMontado = IntHeader(ContByte,ValueByte,sizeByte,0);
+              unsigned char ByteMontado = IntHeader(ContByte,sizeByte,0);
               printf("Achei um unsigned \n");
               break;   
       }
@@ -86,7 +86,7 @@ int string2num (char *s) {
   return a;
 }
 
-unsigned char IntHeader (unsigned char ContByte, int Value, unsigned char size, int IsSigned){
+unsigned char IntHeader (unsigned char ContByte, unsigned char size, int IsSigned){
   unsigned char aux = 0; // 00000000
   aux = aux | size;
   if (ContByte == 1){
@@ -95,13 +95,12 @@ unsigned char IntHeader (unsigned char ContByte, int Value, unsigned char size, 
   if (IsSigned){
     aux = aux | (1<<5);
     aux = aux & (0<<6);
-    return aux;
   }
   else{
     aux = aux & (0<<6);
     aux = aux & (0<<5);
-    return aux;
   }
+  return aux;
 }
 
 unsigned char StringHeader (unsigned char ContByte, unsigned char size){
