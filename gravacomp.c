@@ -8,13 +8,13 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo);
 
 // Funções para o cabeçalho
 
-unsigned char IntHeader (unsigned char ContByte, unsigned char size, int isSigned);
-unsigned char StringHeader (unsigned char ContByte, unsigned char size);
+unsigned char intHeader (unsigned char ContByte, unsigned char size, int isSigned);
+unsigned char stringHeader (unsigned char ContByte, unsigned char size);
 
 // Funções auxiliares
 
-static unsigned char SizeSigned (int num);
-static unsigned char SizeUnsigned (unsigned int num);
+static unsigned char sizeSigned(int num);
+static unsigned char sizeUnsigned(unsigned int num);
 int string2num (char *s);
 
 
@@ -49,7 +49,7 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               char_tamanho[2] = '\0';
               tamanho_s = string2num(char_tamanho);
               sizeByte = strlen((const char*)AuxByte);
-              HeaderMontado = StringHeader(ContByte, sizeByte);
+              HeaderMontado = stringHeader(ContByte, sizeByte);
               fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
               fwrite(AuxByte,sizeof(unsigned char),sizeByte, arquivo);
               i+=2;
@@ -57,15 +57,15 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
 
           case 'i':
             ValueInt = *((int*)AuxByte);
-            sizeByte =  SizeSigned(ValueInt);
-            HeaderMontado = IntHeader(ContByte,sizeByte,1);
+            sizeByte =  sizeSigned(ValueInt);
+            HeaderMontado = intHeader(ContByte,sizeByte,1);
             fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
             break;
 
           case 'u':
             ValueUnsigned = *((unsigned int*)AuxByte);
-            sizeByte = SizeUnsigned(ValueUnsigned);
-            HeaderMontado = IntHeader(ContByte,sizeByte,0);
+            sizeByte = sizeUnsigned(ValueUnsigned);
+            HeaderMontado = intHeader(ContByte,sizeByte,0);
             fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
             break;   
       }
@@ -84,7 +84,7 @@ int string2num (char *s) {
   return a;
 }
 
-unsigned char IntHeader (unsigned char ContByte, unsigned char size, int IsSigned){
+unsigned char intHeader (unsigned char ContByte, unsigned char size, int IsSigned){
   unsigned char aux = 0; // 00000000
   aux = aux | size;
   if (ContByte == 1){
@@ -101,7 +101,7 @@ unsigned char IntHeader (unsigned char ContByte, unsigned char size, int IsSigne
   return aux;
 }
 
-unsigned char StringHeader (unsigned char ContByte, unsigned char size){
+unsigned char stringHeader (unsigned char ContByte, unsigned char size){
   unsigned char aux = 0;
   aux = aux | size;
   if (ContByte == 1){
@@ -113,7 +113,7 @@ unsigned char StringHeader (unsigned char ContByte, unsigned char size){
 
 
 // FUNÇÃO COPIADA DA INTERNET PARA TESTES, ENTENDER O QUE ELA FAZ
-static unsigned char SizeUnsigned (unsigned int num){
+static unsigned char sizeUnsigned (unsigned int num){
     char i = 31;
     while (i--){
         if ((num & (1<<i)) == (1<<i))
@@ -127,7 +127,7 @@ static unsigned char SizeUnsigned (unsigned int num){
         return 3;
     return 4;
 }
-static unsigned char SizeSigned (int num){
+static unsigned char sizeSigned (int num){
     char i = 31;
     if ((num & (1<<i)) == (1<<i)){
         while (i--){
@@ -142,5 +142,5 @@ static unsigned char SizeSigned (int num){
             return 3;
         return 4;
     }
-    else return SizeUnsigned (num);
+    else return sizeUnsigned (num);
 }
