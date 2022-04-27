@@ -30,7 +30,7 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   unsigned char HeaderMontado; // Header montado para ser inserido no arquivo
   int tamanho_s = 0; // Tamanho da string do struct
   unsigned char ContByte; // Indica se eh o ultimo da estrutura
-  unsigned int sizeByte; // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
+  unsigned char sizeByte; // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
 
   fwrite(&nstructs,sizeof(unsigned char),1,arquivo);  // PRIMEIRO BYTE TEM QUE SER A QUANTIDADE DE STRUCTS OU SEJA
   
