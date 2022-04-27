@@ -92,11 +92,11 @@ unsigned char IntHeader (unsigned char ContByte, unsigned char size, int IsSigne
   }
   if (IsSigned){
     aux = aux | (1<<5);
-    aux = aux & (0<<6);
+    //aux = aux & (0<<6);
   }
-  else{
-    aux = aux & (0<<6);
-    aux = aux & (0<<5);
+  else{ //DAR UMA OLHADA DPS 
+    //aux = aux & (0<<6);
+    //aux = aux & (0<<5);
   }
   return aux;
 }
