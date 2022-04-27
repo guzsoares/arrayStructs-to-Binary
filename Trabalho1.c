@@ -33,21 +33,20 @@ int main(void){
     fprintf(arquivo ,"Erro ao abrir arquivo\n");
     exit(1);
   }
-  int a = gravacomp( 1, p, descritor, arquivo);
+  int a = gravacomp(2, p, descritor, arquivo);
   return 0;
 }
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
-    
-    int tamanho_s = 0;
-    unsigned char PrimeiroByte;     // Quantidade de structs armazenadas
-    unsigned char ContByte;          // Indica se eh o ultimo da estrutura
-    unsigned int TypeByte;          // Caso seja um char devera conter 1 e caso seja um int devera conter 00 se eh unsigned e 01 se eh signed
-    unsigned int sizeByte;          // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
-    unsigned char StringByte;       // Usado para gravar os bytes que compoem a string
-    unsigned char ValueByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
-    
-  for (int i = 0; i < strlen(descritor); i++){
+  int tamanho_s = 0;
+  unsigned char PrimeiroByte;     // Quantidade de structs armazenadas
+  unsigned char ContByte;          // Indica se eh o ultimo da estrutura
+  unsigned int TypeByte;          // Caso seja um char devera conter 1 e caso seja um int devera conter 00 se eh unsigned e 01 se eh signed
+  unsigned int sizeByte;          // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
+  unsigned char StringByte;       // Usado para gravar os bytes que compoem a string
+  unsigned char ValueByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
+  while(nstructs){
+    for (int i = 0; i < strlen(descritor); i++){
     // string acompanha s00, int i, unsigned u, ou seja string 3 char int 1 char e unsigned 1 char
       
       switch (descritor[i]){
@@ -73,6 +72,8 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               printf("Achei um unsigned \n");
               break;   
       }
+    }
+    nstructs--;
   }
   if (arquivo == NULL){
     printf("Erro ao gravar no arquivo\n");
