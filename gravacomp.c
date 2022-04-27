@@ -38,7 +38,7 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   
   while(nstructs){
     for (int i = 0; i < strlen(descritor); i++){
-      if (strlen(descritor) == i){
+      if (strlen(descritor) == (i+1)){
         ContByte = 1;
       }
     // string acompanha s00, int i, unsigned u, ou seja string 3 char int 1 char e unsigned 1 char
