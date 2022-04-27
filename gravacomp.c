@@ -15,6 +15,7 @@ unsigned char stringHeader (unsigned char ContByte, unsigned char size);
 
 static unsigned char sizeSigned(int num);
 static unsigned char sizeUnsigned(unsigned int num);
+unsigned char FixPadding(int pad);
 int string2num (char *s);
 
 
@@ -22,6 +23,7 @@ int string2num (char *s);
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   
+  int ContaPadding = 0;
   unsigned char aux1;
   unsigned int ValueUnsigned; // Valores guardados no unsigned
   int ValueInt; // Valores guardados no signed
@@ -53,8 +55,12 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               HeaderMontado = stringHeader(ContByte, sizeByte);
               fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
               fwrite(AuxByte,sizeof(unsigned char),sizeByte, arquivo);
+              if (descritor[i-1] != 's'){
+                  ContaPadding = FixPadding(tamanho_s);
+              }
+              AuxByte += ContaPadding;
+              ContaPadding = 0;
               i+=2;
-              AuxByte += tamanho_s;
               break;
 
           case 'i':
@@ -106,11 +112,6 @@ unsigned char intHeader (unsigned char ContByte, unsigned char size, int IsSigne
   }
   if (IsSigned){
     aux = aux | (1<<5);
-    //aux = aux & (0<<6);
-  }
-  else{ //DAR UMA OLHADA DPS 
-    //aux = aux & (0<<6);
-    //aux = aux & (0<<5);
   }
   return aux;
 }
@@ -157,4 +158,11 @@ static unsigned char sizeSigned (int num){
         return 4;
     }
     else return sizeUnsigned (num);
+}
+
+unsigned char FixPadding(int pad){
+    while (pad%4 != 0){ // ENQUANTO O NUMERO NAO FOR DIVISIVEL POR 4 QUE SAO OS BYTES DO INT ELE NAO SERA COMPATIVEL
+        pad++;
+    }
+    return pad;
 }
