@@ -28,6 +28,7 @@ unsigned char StringHeader (unsigned char ContByte, unsigned char size);
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   int tamanho_s = 0;
+  unsigned char ByteMontado;
   unsigned char PrimeiroByte;     // Quantidade de structs armazenadas
   unsigned char ContByte;          // Indica se eh o ultimo da estrutura
   unsigned int TypeByte;          // Caso seja um char devera conter 1 e caso seja um int devera conter 00 se eh unsigned e 01 se eh signed
@@ -56,15 +57,15 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               
               i+=2;
               //se for um s, ele le a casa + 2 referentes ao numero de caracteres
-              unsigned char ByteMontado = StringHeader(ContByte, sizeByte);
+              ByteMontado = StringHeader(ContByte, sizeByte);
               break;
           case 'i':
               printf("Achei um int \n");
-              unsigned char ByteMontado = IntHeader(ContByte,sizeByte,1);
+              ByteMontado = IntHeader(ContByte,sizeByte,1);
               break;
           case 'u':
-              unsigned char ByteMontado = IntHeader(ContByte,sizeByte,0);
               printf("Achei um unsigned \n");
+              ByteMontado = IntHeader(ContByte,sizeByte,0);
               break;   
       }
     }
@@ -111,4 +112,35 @@ unsigned char StringHeader (unsigned char ContByte, unsigned char size){
   }
   aux = aux | (1<<6);
   return aux;
+}
+void dump (void *p, int n) {
+  unsigned char *p1 = p;
+  printf("%d\n",n);
+  while (n--) {
+    printf("%p - %02x\n", p1, *p1);
+    p1++;
+  }
+}
+
+int nBytesInt(void *number){
+  int nbytes =1;
+  unsigned char *aux = number;
+  unsigned char CheckEnd = 0;
+  for (int i = 1; i < 5; i++)
+  {
+    if(*aux == CheckEnd){
+      break;
+    }
+    aux++;
+    nbytes = i;
+  }
+  return nbytes;
+}
+
+int main(void)
+{
+  int num= 1;
+  dump(&num, sizeof(num));
+  printf("%d\n",nBytesInt(&num));
+  return 0;
 }
