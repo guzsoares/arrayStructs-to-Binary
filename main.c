@@ -15,4 +15,6 @@ int main(void){
     arquivo = fopen("arquivo.bin","wb");
     gravacomp(2, &Teste1, "is05u",arquivo);
     fclose(arquivo);
+    arquivo = fopen("arquivo.bin","rb");
+    mostracomp(arquivo);
 }
