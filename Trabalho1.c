@@ -19,6 +19,12 @@ struct s exemplo[5];
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo);
 int string2num (char *s);
 
+// Funções para o cabeçalho
+
+unsigned char SignedIntHeader (unsigned char ContByte, int Value, unsigned char size);
+unsigned char UnsignedIntHeader (unsigned char ContByte, unsigned int Value, unsigned char size);
+unsigned char StringHeader (unsigned char ContByte, unsigned char size);
+
 /****************************************************************************/
 int main(void){
   void *p;
@@ -36,26 +42,23 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
     
     int tamanho_s = 0;
     unsigned char PrimeiroByte;     // Quantidade de structs armazenadas
-    unsigned int ContByte;          // Indica se eh o ultimo da estrutura
+    unsigned char ContByte;          // Indica se eh o ultimo da estrutura
     unsigned int TypeByte;          // Caso seja um char devera conter 1 e caso seja um int devera conter 00 se eh unsigned e 01 se eh signed
-    unsigned int SizeByte;          // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
+    unsigned int sizeByte;          // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
     unsigned char StringByte;       // Usado para gravar os bytes que compoem a string
-    unsigned char IntByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
+    unsigned char ValueByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
     
   for (int i = 0; i < strlen(descritor); i++){
     // string acompanha s00, int i, unsigned u, ou seja string 3 char int 1 char e unsigned 1 char
       
       switch (descritor[i]){
-          case 115: // ASCII table s = 115, i = 105, u = 117
+          case 's':
               printf("Achei uma string ");
               //definir tamanho da string
               char char_tamanho[3];
               char_tamanho[0] = descritor[i+1];
               char_tamanho[1] = descritor[i+2];
               char_tamanho[2] = '\0';
-              int size = string2num(char_tamanho);
-              
-              tamanho_s = size;
               //esse resultado que será impresso no arquivo
               
               
@@ -64,10 +67,10 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               i+=2;
               //se for um s, ele le a casa + 2 referentes ao numero de caracteres
               break;
-          case 105:
+          case 'i':
               printf("Achei um int \n");
               break;
-          case 117:
+          case 'u':
               printf("Achei um unsigned \n");
               break;   
       }
@@ -85,4 +88,26 @@ int string2num (char *s) {
   for (; *s; s++)
     a = a*10 + (*s - '0');
   return a;
+}
+
+unsigned char SignedIntHeader (unsigned char ContByte, int Value, unsigned char size){
+  unsigned char aux = 0; // 00000000
+  aux = aux | size;
+  if (ContByte == 1){
+    aux = aux | (1<<7);
+  }
+  aux = aux | (1<<5);
+  aux = aux & (0<<6);
+  return aux;
+}
+
+unsigned char UnsignedIntHeader (unsigned char ContByte, unsigned int Value, unsigned char size){
+  unsigned char aux = 0;
+  aux = aux | size;
+  if (ContByte == 1){
+    aux = aux | (1<<7);
+  }
+  aux = aux & (0<<6);
+  aux = aux & (0<<5);
+  return aux;
 }
