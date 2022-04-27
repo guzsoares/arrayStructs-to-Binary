@@ -36,6 +36,9 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   unsigned char ValueByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
   while(nstructs){
     for (int i = 0; i < strlen(descritor); i++){
+      if (strlen(descritor == i)){
+        ContByte = 1;
+      }
     // string acompanha s00, int i, unsigned u, ou seja string 3 char int 1 char e unsigned 1 char
       
       switch (descritor[i]){
@@ -53,15 +56,19 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               
               i+=2;
               //se for um s, ele le a casa + 2 referentes ao numero de caracteres
+              StringHeader(ContByte, sizeByte);
               break;
           case 'i':
               printf("Achei um int \n");
+              IntHeader(ContByte,ValueByte,sizeByte,1)
               break;
           case 'u':
+              IntHeader(ContByte,ValueByte,sizeByte,0)
               printf("Achei um unsigned \n");
               break;   
       }
     }
+    ContByte = 0;
     nstructs--;
   }
   if (arquivo == NULL){
