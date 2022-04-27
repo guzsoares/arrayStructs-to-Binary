@@ -50,21 +50,21 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               tamanho_s = string2num(char_tamanho);
               i+=2;
               HeaderMontado = StringHeader(ContByte, sizeByte);
-              fwrite(&HeaderMontado,sizeof(unsigned char,1,arquivo)); // Colocando o cabeçalho no arquivo
+              fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
               break;
 
           case 'i':
             ValueInt = *((int*)AuxByte);
             sizeByte =  SizeSigned(ValueInt);
             HeaderMontado = IntHeader(ContByte,sizeByte,1);
-            fwrite(&HeaderMontado,sizeof(unsigned char,1,arquivo)); // Colocando o cabeçalho no arquivo
+            fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
             break;
 
           case 'u':
             ValueUnsigned = *((unsigned int*)AuxByte);
             sizeByte = SizeUnsigned(ValueUnsigned);
             HeaderMontado = IntHeader(ContByte,sizeByte,0);
-            fwrite(&HeaderMontado,sizeof(unsigned char,1,arquivo)); // Colocando o cabeçalho no arquivo
+            fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
             break;   
       }
     }
