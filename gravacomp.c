@@ -48,9 +48,11 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               char_tamanho[1] = descritor[i+2];
               char_tamanho[2] = '\0';
               tamanho_s = string2num(char_tamanho);
-              i+=3;
+              sizeByte = strlen((const char*)AuxByte);
               HeaderMontado = StringHeader(ContByte, sizeByte);
               fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o cabeçalho no arquivo
+              fwrite(AuxByte,sizeof(unsigned char),sizeByte, arquivo);
+              i+=2;
               break;
 
           case 'i':
