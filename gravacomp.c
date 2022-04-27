@@ -2,38 +2,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-TABELA ASCII:
-a = 0x61; b = 0x62; c = 0x63;
-*/
-
-  struct s {
-    int  i1, i2;
-    char s1[3];
-    unsigned int u1;
-    char s2[10];
-  };
-struct s exemplo[5];
-
+// Função Principal
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo);
-int string2num (char *s);
 
 // Funções para o cabeçalho
 
 unsigned char IntHeader (unsigned char ContByte, unsigned char size, int isSigned);
 unsigned char StringHeader (unsigned char ContByte, unsigned char size);
 
+// Funções auxiliares
+
+static unsigned char SizeSigned (int num);
+static unsigned char SizeUnsigned (unsigned int num);
+int string2num (char *s);
+
+
 /****************************************************************************/
 
 int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
-  int tamanho_s = 0;
-  unsigned char PrimeiroByte;     // Quantidade de structs armazenadas
-  unsigned char ContByte;          // Indica se eh o ultimo da estrutura
-  unsigned int TypeByte;          // Caso seja um char devera conter 1 e caso seja um int devera conter 00 se eh unsigned e 01 se eh signed
-  unsigned int sizeByte;          // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
-  unsigned char StringByte;       // Usado para gravar os bytes que compoem a string
-  unsigned char ValueByte;          // Usado para gravar os bytes usados para representar o int - lembrando de usar somente o necessario para armazenar o int e nao 4 bytes
+  
+  unsigned int ValueUnsigned; // Valores guardados no unsigned
+  int ValueInt; // Valores guardados no signed
+  unsigned char * AuxByte = (unsigned char *) valores; // Pegando os Bytes dos valores da struct
+  char char_tamanho[3]; // Usado para calcular o número da string do struct
+  unsigned char ByteMontado; // Byte montado para ser inserido no arquivo
+  int tamanho_s = 0; // Tamanho da string do struct
+  unsigned char ContByte; // Indica se eh o ultimo da estrutura
+  unsigned int sizeByte; // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
+
+  fwrite(&nstructs,sizeof(unsigned char),1,arquivo);  // PRIMEIRO BYTE TEM QUE SER A QUANTIDADE DE STRUCTS OU SEJA
+  
   while(nstructs){
     for (int i = 0; i < strlen(descritor); i++){
       if (strlen(descritor) == i){
@@ -42,38 +41,32 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
     // string acompanha s00, int i, unsigned u, ou seja string 3 char int 1 char e unsigned 1 char
       
       switch (descritor[i]){
+
           case 's':
-              printf("Achei uma string ");
               //definir tamanho da string
-              char char_tamanho[3];
               char_tamanho[0] = descritor[i+1];
               char_tamanho[1] = descritor[i+2];
               char_tamanho[2] = '\0';
-              //esse resultado que será impresso no arquivo
-              
-              
-              printf("de tamanho %d \n",tamanho_s);
-              
+              tamanho_s = string2num(char_tamanho);
               i+=2;
-              //se for um s, ele le a casa + 2 referentes ao numero de caracteres
-              unsigned char ByteMontado = StringHeader(ContByte, sizeByte);
+              ByteMontado = StringHeader(ContByte, sizeByte);
               break;
+
           case 'i':
-              printf("Achei um int \n");
-              unsigned char ByteMontado = IntHeader(ContByte,sizeByte,1);
-              break;
+            ValueInt = *((int*)AuxByte);
+            sizeByte =  SizeSigned(ValueInt);
+            ByteMontado = IntHeader(ContByte,sizeByte,1);
+            break;
+
           case 'u':
-              unsigned char ByteMontado = IntHeader(ContByte,sizeByte,0);
-              printf("Achei um unsigned \n");
-              break;   
+            ValueUnsigned = *((unsigned int*)AuxByte);
+            sizeByte = SizeUnsigned(ValueUnsigned);
+            ByteMontado = IntHeader(ContByte,sizeByte,0);
+            break;   
       }
     }
     ContByte = 0;
     nstructs--;
-  }
-  if (arquivo == NULL){
-    printf("Erro ao gravar no arquivo\n");
-    return -1;
   }
   return 0;
 }
@@ -111,4 +104,38 @@ unsigned char StringHeader (unsigned char ContByte, unsigned char size){
   }
   aux = aux | (1<<6);
   return aux;
+}
+
+
+// FUNÇÃO COPIADA DA INTERNET PARA TESTES, ENTENDER O QUE ELA FAZ
+static unsigned char SizeUnsigned (unsigned int num){
+    char i = 31;
+    while (i--){
+        if ((num & (1<<i)) == (1<<i))
+            break;
+    }
+    if (i<8)
+        return 1;
+    else if (i<16)
+        return 2;
+    else if (i<24)
+        return 3;
+    return 4;
+}
+static unsigned char SizeSigned (int num){
+    char i = 31;
+    if ((num & (1<<i)) == (1<<i)){
+        while (i--){
+            if ((num & (1<<i)) != (1<<i))
+                break;
+        }
+        if (i<7)
+            return 1;
+        else if (i<15)
+            return 2;
+        else if (i<23)
+            return 3;
+        return 4;
+    }
+    else return SizeUnsigned (num);
 }
