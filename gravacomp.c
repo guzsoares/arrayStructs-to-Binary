@@ -26,7 +26,7 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
   int ValueInt; // Valores guardados no signed
   unsigned char * AuxByte = (unsigned char *) valores; // Pegando os Bytes dos valores da struct
   char char_tamanho[3]; // Usado para calcular o número da string do struct
-  unsigned char ByteMontado; // Byte montado para ser inserido no arquivo
+  unsigned char CabecalhoMontado; // Cabecalho montado para ser inserido no arquivo
   int tamanho_s = 0; // Tamanho da string do struct
   unsigned char ContByte; // Indica se eh o ultimo da estrutura
   unsigned int sizeByte; // Caso seja uma string tem o tamanho da string e caso seja um int tem o valor do numero de bytes usado para representar o int
@@ -49,19 +49,22 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               char_tamanho[2] = '\0';
               tamanho_s = string2num(char_tamanho);
               i+=2;
-              ByteMontado = StringHeader(ContByte, sizeByte);
+              CabecalhoMontado = StringHeader(ContByte, sizeByte);
+              fwrite(&CabecalhoMontado,sizeof(unsigned char,1,arquivo)); // Colocando o cabeçalho no arquivo
               break;
 
           case 'i':
             ValueInt = *((int*)AuxByte);
             sizeByte =  SizeSigned(ValueInt);
-            ByteMontado = IntHeader(ContByte,sizeByte,1);
+            CabecalhoMontado = IntHeader(ContByte,sizeByte,1);
+            fwrite(&CabecalhoMontado,sizeof(unsigned char,1,arquivo)); // Colocando o cabeçalho no arquivo
             break;
 
           case 'u':
             ValueUnsigned = *((unsigned int*)AuxByte);
             sizeByte = SizeUnsigned(ValueUnsigned);
-            ByteMontado = IntHeader(ContByte,sizeByte,0);
+            CabecalhoMontado = IntHeader(ContByte,sizeByte,0);
+            fwrite(&CabecalhoMontado,sizeof(unsigned char,1,arquivo)); // Colocando o cabeçalho no arquivo
             break;   
       }
     }
