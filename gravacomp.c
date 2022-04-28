@@ -24,6 +24,7 @@ int string2num(char *s); // String to number padrao
 
 int structEndCheck( unsigned char header);
 char typeCheck(unsigned char header); 
+unsigned char getNumBytes(unsigned char header, char type);
 
 /***********************************************************************************************************************************************************************************************/
 
@@ -189,16 +190,21 @@ void mostracomp(FILE * arquivo) {
     int contByte;
     unsigned char numBytes;
     unsigned char chari;
-    
+    int i = 0;
+
+    //Debug
+    int gusacoint;
+    unsigned int gusacoU;
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
     
     printf("Estruturas: %d \n", nstructs);
     
     while (nstructs) {
+        while(!contByte){
         header = fgetc(arquivo); // Segundo byte eh o cabecalho
         contByte = structEndCheck(header);
         type = typeCheck(header);
-        numBytes = getNumBytes(header);
+        numBytes = getNumBytes(header,type);
         switch (type)
         {
           case 's':
@@ -214,26 +220,25 @@ void mostracomp(FILE * arquivo) {
             break;
 
           case 'i':
-            /* code */
+            gusacoint = fgetc(arquivo);
             break;
 
           case 'u':
-            /* code */
+            gusacoU = fgetc(arquivo);
             break;
 
         }
-        
-        
-        
         nstructs--;
+      }
+        
     }
 }
 
 char typeCheck(unsigned char header) {
-  if ((header & (1<<6) == (1<<6))) {
+  if ((header & (1<<6)) == (1<<6)) {
     return's';
   }
-  else if ((header & (1<<5) == (1<<5))) {
+  else if ((header & (1<<5)) == (1<<5)) {
     return 'i';
   } else {
     return 'u';
@@ -241,18 +246,19 @@ char typeCheck(unsigned char header) {
 }
 
 int structEndCheck(unsigned char header) {
-  if ((header & (1<<7) == (1<<7))) {
+  if ((header & (1<<7)) == (1<<7)) {
     return 1;
   } else {
     return 0;
   }
 }
 unsigned char getNumBytes(unsigned char header, char type) {
+  unsigned char aux;
   if (type == 's') {
-    unsigned char aux = 63; //aux = 0011 1111
+    aux = 63; //aux = 0011 1111
   }
   else {
-    unsigned char aux = 31; //aux = 0001 1111
+    aux = 31; //aux = 0001 1111
   }  
   aux = aux & header;   //retorna os bits necessarios
   return aux;
