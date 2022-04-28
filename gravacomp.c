@@ -185,6 +185,7 @@ void mostracomp(FILE * arquivo) {
     int nstructs;
     unsigned char header;
     char type;
+    int contByte;
     
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
     
