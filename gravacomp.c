@@ -22,6 +22,9 @@ int string2num(char *s); // String to number padrao
 
 // Funcoes auxiliares para mostracomp
 
+int structEndCheck( unsigned char header);
+char typeCheck(unsigned char header, char type) 
+
 /***********************************************************************************************************************************************************************************************/
 
 int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
@@ -181,6 +184,7 @@ unsigned char FixPadding(int pad) {
 void mostracomp(FILE * arquivo) {
     int nstructs;
     unsigned char header;
+    char type;
     
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
     
@@ -194,4 +198,24 @@ void mostracomp(FILE * arquivo) {
         
         nstructs--;
     }
+}
+
+char typeCheck(unsigned char header, char type) {
+  if ((header & (1<<6) == (1<<6))) {
+    type = 's';
+  }
+  else if ((header & (1<<5) == (1<<5))) {
+    type = 'i';
+  } else {
+    type = 'u';
+  }
+  return type;
+}
+
+int structEndCheck( unsigned char header) {
+  if ((header & (1<<7) == (1<<7))) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
