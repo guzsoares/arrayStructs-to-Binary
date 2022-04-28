@@ -195,7 +195,21 @@ void mostracomp(FILE * arquivo) {
         header = fgetc(arquivo); // Segundo byte eh o cabecalho
         contByte = structEndCheck(header);
         type = typeCheck(header);
-        
+        switch (type)
+        {
+          case 's':
+            /* code */
+            break;
+          case 'i':
+            /* code */
+            break;
+          case 'u':
+            /* code */
+            break;
+          
+          default:
+            break;
+        }
         
         
         
@@ -214,10 +228,20 @@ char typeCheck(unsigned char header) {
   }
 }
 
-int structEndCheck( unsigned char header) {
+int structEndCheck(unsigned char header) {
   if ((header & (1<<7) == (1<<7))) {
     return 1;
   } else {
     return 0;
   }
+}
+unsigned char getNumBytesInt(unsigned char header) {
+  unsigned char aux = 31;   //aux = 0001 1111
+  aux = aux & header;   //retorna os primeiros 5 bits
+  return aux;
+}
+unsigned char getNumBytesString(unsigned char header) {
+  unsigned char aux = 63;   //aux = 0011 1111
+  aux = aux & header;   //retorna os primeiros 6 bits
+  return aux;
 }
