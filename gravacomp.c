@@ -23,7 +23,7 @@ int string2num(char *s); // String to number padrao
 // Funcoes auxiliares para mostracomp
 
 int structEndCheck( unsigned char header);
-char typeCheck(unsigned char header, char type) 
+char typeCheck(unsigned char header, char type);
 
 /***********************************************************************************************************************************************************************************************/
 
