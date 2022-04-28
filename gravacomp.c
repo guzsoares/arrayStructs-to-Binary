@@ -23,7 +23,7 @@ int string2num(char *s); // String to number padrao
 // Funcoes auxiliares para mostracomp
 
 int structEndCheck( unsigned char header);
-char typeCheck(unsigned char header, char type); 
+char typeCheck(unsigned char header); 
 
 /***********************************************************************************************************************************************************************************************/
 
@@ -193,6 +193,8 @@ void mostracomp(FILE * arquivo) {
     
     while (nstructs) {
         header = fgetc(arquivo); // Segundo byte eh o cabecalho
+        contByte = structEndCheck(header);
+        type = typeCheck(header);
         
         
         
@@ -201,16 +203,15 @@ void mostracomp(FILE * arquivo) {
     }
 }
 
-char typeCheck(unsigned char header, char type) {
+char typeCheck(unsigned char header) {
   if ((header & (1<<6) == (1<<6))) {
-    type = 's';
+    return's';
   }
   else if ((header & (1<<5) == (1<<5))) {
-    type = 'i';
+    return 'i';
   } else {
-    type = 'u';
+    return 'u';
   }
-  return type;
 }
 
 int structEndCheck( unsigned char header) {
