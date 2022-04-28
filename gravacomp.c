@@ -4,48 +4,48 @@
 
 // Função Principal
 
-int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo);
+int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo);
 
-void mostracomp(FILE * arquivo);
+void mostracomp(FILE *arquivo);
 
 // Funções para o cabeçalho gravacomp
 
-unsigned char intHeader (unsigned char ContByte, unsigned char size, int isSigned); // Monta o header do int
-unsigned char stringHeader (unsigned char ContByte, unsigned char size); // Monta o header da string
+unsigned char intHeader(unsigned char ContByte, unsigned char size, int isSigned); // Monta o header do int
+unsigned char stringHeader(unsigned char ContByte, unsigned char size); // Monta o header da string
 
 // Funções auxiliares para gravacomp
 
 static unsigned char sizeSigned(int num); // Calcula a quantidade de bytes real ocupada por um signed
 static unsigned char sizeUnsigned(unsigned int num); // Calcula a quantidade de bytes real ocupada por um unsigned
 unsigned char FixPadding(int pad); // Funcao para calcular quantas casas terao que ser puladas para ir para o proximo elem da struct sem cair no padding
-int string2num (char *s); // String to number padrao
+int string2num(char *s); // String to number padrao
 
 // Funcoes auxiliares para mostracomp
 
 /***********************************************************************************************************************************************************************************************/
 
-int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
+int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   
   int ContaPadding = 0; /* Usado para contar o padding entre os elementos da struct*/
   unsigned char aux1; /* unsigned char auxiliar para armazenar os valores no arquivo*/
   unsigned int ValueUnsigned; // Valor do unsigned
   int ValueInt; // Valor do signed
-  unsigned char * AuxByte = (unsigned char *) valores; // Transformando a void valores em unsigned char para poder usar aritmetica de ponteiros
+  unsigned char *AuxByte = (unsigned char *)valores; // Transformando a void valores em unsigned char para poder usar aritmetica de ponteiros
   char char_tamanho[3]; // Usado para calcular o tamanho da string na struct que eh representada da seguinte forma s01
   unsigned char HeaderMontado; // Header montado para ser inserido no arquivo
   int tamanho_s = 0; // Tamanho da string do struct
   unsigned char ContByte; // Indica se eh o ultimo da estrutura
   unsigned char sizeByte; // tamanho de bytes real que sao ocupados
 
-  fwrite(&nstructs,sizeof(unsigned char),1,arquivo);  // Primeiro byte indicando o nstructs
+  fwrite(&nstructs, sizeof(unsigned char), 1, arquivo);  // Primeiro byte indicando o nstructs
   
-  while(nstructs){
-    for (int i = 0; i < strlen(descritor); i++){
-      if (strlen(descritor) == (i+1)){
+  while (nstructs) {
+    for (int i = 0; i < strlen(descritor); i++) {
+      if (strlen(descritor) == (i+1)) {
         ContByte = 1;
       }
       
-      switch (descritor[i]){
+      switch (descritor[i]) {
 
           case 's': // Caso seja str
               //definir tamanho da string
@@ -57,32 +57,31 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
               // Pegando tamanho que a string ocupa e montando o header
               sizeByte = strlen((const char*)AuxByte);
               HeaderMontado = stringHeader(ContByte, sizeByte);
-              fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); // Colocando o header no arqiuvo
+              fwrite(&HeaderMontado, sizeof(unsigned char), 1, arquivo); // Colocando o header no arqiuvo
               
               // adicionando os char no arquivo e calculando o padding para pular para o proximo valor
-              fwrite(AuxByte,sizeof(unsigned char),sizeByte, arquivo);
+              fwrite(AuxByte, sizeof(unsigned char), sizeByte, arquivo);
               
-              if (descritor[i-1] != 's'){
+              if (descritor[i-1] != 's') {
                   ContaPadding = FixPadding(tamanho_s);
                   AuxByte += ContaPadding;
-              }
-              else{
-                  AuxByte+= tamanho_s;
+              } else {
+                  AuxByte += tamanho_s;
               }
               ContaPadding = 0;
-              i+=2;
+              i += 2;
               break;
 
           case 'i': // Caso seja int
               
             ValueInt = *((int*)AuxByte); /* Associando o valor do int a uma variavel */
             sizeByte =  sizeSigned(ValueInt); /* Tamanho real que o int ocupa */
-            HeaderMontado = intHeader(ContByte,sizeByte,1); /* Montagem do header */
-            fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); /* Colocando o header no arquivo */
+            HeaderMontado = intHeader(ContByte, sizeByte, 1); /* Montagem do header */
+            fwrite(&HeaderMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
               
-            while(sizeByte){
+            while (sizeByte) {
               aux1 = ((ValueInt)>>(8*(sizeByte-1))); /* Escrevendo os valores em Big Endian */
-              fwrite(&aux1,sizeof(unsigned char),1,arquivo);
+              fwrite(&aux1, sizeof(unsigned char), 1, arquivo);
               sizeByte--;
             }
             AuxByte += 4; /* Percorrendo os valores do struct*/
@@ -91,12 +90,12 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
           case 'u': /* Caso seja unsigned int */
             ValueUnsigned = *((unsigned int*)AuxByte); /* Associando o valor do unsigned a uma variavel */
             sizeByte = sizeUnsigned(ValueUnsigned); /* Tamanho real que o unsigned ocupa */
-            HeaderMontado = intHeader(ContByte,sizeByte,0); /* Montando o header */
-            fwrite(&HeaderMontado,sizeof(unsigned char),1,arquivo); /* Colocando o header no arquivo */
+            HeaderMontado = intHeader(ContByte, sizeByte, 0); /* Montando o header */
+            fwrite(&HeaderMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
               
-            while(sizeByte){
+            while (sizeByte) {
               aux1 = ((ValueUnsigned)>>(8*(sizeByte-1))); /* Escrevendo em big endian no arquivo */
-              fwrite(&aux1,sizeof(unsigned char),1,arquivo);
+              fwrite(&aux1, sizeof(unsigned char), 1, arquivo);
               sizeByte--;
             }
             AuxByte += 4; /* Percorrendo o ponteiro com os valores do struct */
@@ -110,29 +109,29 @@ int gravacomp (int nstructs, void* valores, char* descritor, FILE* arquivo){
 }
 
 
-int string2num (char *s) { /* Funcao padrao str to num */
+int string2num(char *s) { /* Funcao padrao str to num */
   int a = 0;
   for (; *s; s++)
     a = a*10 + (*s - '0');
   return a;
 }
 
-unsigned char intHeader (unsigned char ContByte, unsigned char size, int IsSigned){ /* Montagem do Header do int*/
+unsigned char intHeader(unsigned char ContByte, unsigned char size, int IsSigned) { /* Montagem do Header do int*/
   unsigned char aux = 0; /* Criando um byte 0000 0000 */
   aux = aux | size; /* Colando o byte do size no aux */
-  if (ContByte == 1){ /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
+  if (ContByte == 1) { /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
     aux = aux | (1<<7);
   }
-  if (IsSigned){ /* Caso seja signed iremos inserir o 1 no quinto bit */
+  if (IsSigned) { /* Caso seja signed iremos inserir o 1 no quinto bit */
     aux = aux | (1<<5);
   }
   return aux; /* Header montado */
 }
 
-unsigned char stringHeader (unsigned char ContByte, unsigned char size){ /* Montagem do Header do str */
+unsigned char stringHeader (unsigned char ContByte, unsigned char size) { /* Montagem do Header do str */
   unsigned char aux = 0; /* Criando um byte 0000 0000 */
   aux = aux | size; /* Colando o byte do size no aux */
-  if (ContByte == 1){ /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
+  if (ContByte == 1) { /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
     aux = aux | (1<<7);
   }
   aux = aux | (1<<6); /* Inserindo o 1 no 6 bit pois eh necessario */
@@ -140,7 +139,7 @@ unsigned char stringHeader (unsigned char ContByte, unsigned char size){ /* Mont
 }
 
 
-static unsigned char sizeUnsigned (unsigned int num){ /* REFAZER FUNCAO PARA TERMOS A NOSSA VERSAO */
+static unsigned char sizeUnsigned(unsigned int num) { /* REFAZER FUNCAO PARA TERMOS A NOSSA VERSAO */
     char i = 31;
     while (i--){
         if ((num & (1<<i)) == (1<<i))
@@ -172,22 +171,22 @@ static unsigned char sizeSigned (int num){ /* REFAZER FUNCAO PARA TERMOS A NOSSA
     else return sizeUnsigned (num);
 }
 
-unsigned char FixPadding(int pad){
-    while (pad%4 != 0){ // ENQUANTO O NUMERO NAO FOR DIVISIVEL POR 4 QUE SAO OS BYTES EM UM INT ELE NAO SERA COMPATIVEL, POIS ELE IRA CAIR EM UM PADDING
+unsigned char FixPadding(int pad) {
+    while (pad%4 != 0) { // ENQUANTO O NUMERO NAO FOR DIVISIVEL POR 4 QUE SAO OS BYTES EM UM INT ELE NAO SERA COMPATIVEL, POIS ELE IRA CAIR EM UM PADDING
         pad++;
     }
     return pad;
 }
 
-void mostracomp(FILE * arquivo){
+void mostracomp(FILE * arquivo) {
     int nstructs;
     unsigned char header;
     
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
     
-    printf("Estruturas: %d \n",nstructs);
+    printf("Estruturas: %d \n", nstructs);
     
-    while(nstructs){
+    while (nstructs) {
         header = fgetc(arquivo); // Segundo byte eh o cabecalho
         
         
