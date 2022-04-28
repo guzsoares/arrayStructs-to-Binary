@@ -182,10 +182,13 @@ unsigned char FixPadding(int pad) {
 }
 
 void mostracomp(FILE * arquivo) {
+    char str[64];
     int nstructs;
     unsigned char header;
     char type;
     int contByte;
+    unsigned char numBytes;
+    unsigned char chari;
     
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
     
@@ -195,20 +198,29 @@ void mostracomp(FILE * arquivo) {
         header = fgetc(arquivo); // Segundo byte eh o cabecalho
         contByte = structEndCheck(header);
         type = typeCheck(header);
+        numBytes = getNumBytes(header);
         switch (type)
         {
           case 's':
-            /* code */
+
+            for (i = 0; i < numBytes ; i++) {
+              chari = fgetc(arquivo);
+              str[i] = chari;
+            }
+
+            str[i] = '\0';
+            printf("(str) %s\n",str);
+            
             break;
+
           case 'i':
             /* code */
             break;
+
           case 'u':
             /* code */
             break;
-          
-          default:
-            break;
+
         }
         
         
@@ -235,13 +247,13 @@ int structEndCheck(unsigned char header) {
     return 0;
   }
 }
-unsigned char getNumBytesInt(unsigned char header) {
-  unsigned char aux = 31;   //aux = 0001 1111
-  aux = aux & header;   //retorna os primeiros 5 bits
-  return aux;
-}
-unsigned char getNumBytesString(unsigned char header) {
-  unsigned char aux = 63;   //aux = 0011 1111
-  aux = aux & header;   //retorna os primeiros 6 bits
+unsigned char getNumBytes(unsigned char header, char type) {
+  if (type == 's') {
+    unsigned char aux = 63; //aux = 0011 1111
+  }
+  else {
+    unsigned char aux = 31; //aux = 0001 1111
+  }  
+  aux = aux & header;   //retorna os bits necessarios
   return aux;
 }
