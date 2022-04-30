@@ -191,7 +191,7 @@ void mostracomp(FILE * arquivo) {
     int nstructs;
     unsigned char header;
     char type;
-    int contByte = 1;
+    int contByte = 0;
     unsigned char numBytes;
     int i = 0;
 
@@ -211,12 +211,13 @@ void mostracomp(FILE * arquivo) {
     printf("Estruturas: %d \n", nstructs);
     
     while (nstructs) {
-        while(contByte){
+        while(!contByte){
           header = fgetc(arquivo); // Segundo byte eh o cabecalho
           qualbyteEstou ++;
           contByte = structEndCheck(header);
           type = typeCheck(header);
           numBytes = getNumBytes(header,type);
+          unsigned char IntByte[4] = { 0 };
           switch (type)
           {
             case 's':
@@ -236,18 +237,20 @@ void mostracomp(FILE * arquivo) {
                 IntBytes[i] = fgetc(arquivo);  //Pega o proximo char do arquivo
                 qualbyteEstou++;
                 if (i == 0){
-                  isPositive = isSigned(IntBytes[0]);
+                  isPositive = isSigned(IntBytes[0]); //observa o últmo bit para ver se o número é negativo
                 }
-                num = (num << 8) | IntBytes[i];
+                num = (num << 8) | IntBytes[i]; //Monta o int através do bitshift
               }
               if (!isPositive){
-                num = num | (-1<<(8 * numBytes));
+                num = num | (-1<<(8 * numBytes)); //Se o número 
               }
               printf("(int) %d (%x)\n",num,num);
-                
               break;
 
             case 'u':
+              for ( i = 0; i < numBytes; i++) {
+
+              }
               printf("estou no u\n");
               gusacoU = fgetc(arquivo);
               qualbyteEstou++;
@@ -271,7 +274,7 @@ char typeCheck(unsigned char header) {
 }
 
 int structEndCheck(unsigned char header) {
-  if ((header & 32) == 32) {
+  if ((header & 128) == 128) {
     return 1;
   } else {
     return 0;
@@ -303,3 +306,5 @@ void dump (void *p, int n) {
     p1++;
   }
 }
+
+  
