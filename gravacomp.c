@@ -25,6 +25,10 @@ int string2num(char *s); // String to number padrao
 int structEndCheck( unsigned char header);
 char typeCheck(unsigned char header); 
 unsigned char getNumBytes(unsigned char header, char type);
+int isSigned(unsigned char MostValubleByte);
+
+// Funcoes para debug
+void dump (void *p, int n);
 
 /***********************************************************************************************************************************************************************************************/
 
@@ -187,50 +191,71 @@ void mostracomp(FILE * arquivo) {
     int nstructs;
     unsigned char header;
     char type;
-    int contByte;
+    int contByte = 1;
     unsigned char numBytes;
-    unsigned char chari;
     int i = 0;
 
+    /*Variaveis para guardar os bytes*/
+    unsigned char chari;
+    unsigned char IntBytes[4]; 
+    int num = 0;  //int que irá ser printado
+    int isPositive;
+
     //Debug
+    int qualbyteEstou = 0;
     int gusacoint;
     unsigned int gusacoU;
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
+    qualbyteEstou++;
     
     printf("Estruturas: %d \n", nstructs);
     
     while (nstructs) {
-        while(!contByte){
-        header = fgetc(arquivo); // Segundo byte eh o cabecalho
-        contByte = structEndCheck(header);
-        type = typeCheck(header);
-        numBytes = getNumBytes(header,type);
-        switch (type)
-        {
-          case 's':
+        while(contByte){
+          header = fgetc(arquivo); // Segundo byte eh o cabecalho
+          qualbyteEstou ++;
+          contByte = structEndCheck(header);
+          type = typeCheck(header);
+          numBytes = getNumBytes(header,type);
+          switch (type)
+          {
+            case 's':
+              for (i = 0; i < numBytes ; i++) {
+                chari = fgetc(arquivo);
+                qualbyteEstou++;
+                str[i] = chari;
+              }
 
-            for (i = 0; i < numBytes ; i++) {
-              chari = fgetc(arquivo);
-              str[i] = chari;
-            }
+              str[i] = '\0';
+              printf("(str) %s\n",str);
+              
+              break;
 
-            str[i] = '\0';
-            printf("(str) %s\n",str);
-            
-            break;
+            case 'i':
+              for ( i = 0; i < numBytes; i++) {
+                IntBytes[i] = fgetc(arquivo);  //Pega o proximo char do arquivo
+                qualbyteEstou++;
+                if (i == 0){
+                  isPositive = isSigned(IntBytes[0]);
+                }
+                num = (num << 8) | IntBytes[i];
+              }
+              if (!isPositive){
+                num = num | (-1<<(8 * numBytes));
+              }
+              printf("(int) %d (%x)\n",num,num);
+                
+              break;
 
-          case 'i':
-            gusacoint = fgetc(arquivo);
-            break;
+            case 'u':
+              printf("estou no u\n");
+              gusacoU = fgetc(arquivo);
+              qualbyteEstou++;
+              break;
 
-          case 'u':
-            gusacoU = fgetc(arquivo);
-            break;
-
+          }
         }
-        nstructs--;
-      }
-        
+    nstructs--;
     }
 }
 
@@ -246,7 +271,7 @@ char typeCheck(unsigned char header) {
 }
 
 int structEndCheck(unsigned char header) {
-  if ((header & (1<<7)) == (1<<7)) {
+  if ((header & 32) == 32) {
     return 1;
   } else {
     return 0;
@@ -262,4 +287,19 @@ unsigned char getNumBytes(unsigned char header, char type) {
   }  
   aux = aux & header;   //retorna os bits necessarios
   return aux;
+}
+int isSigned(unsigned char MostValubleByte){ //Para verificar se o número é positivo ou negativo
+  if((MostValubleByte & (1<<8)) == (1<<8)){
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void dump (void *p, int n) {
+  unsigned char *p1 = p;
+  while (n--) {
+    printf("%p - %02x\n", p1, *p1);
+    p1++;
+  }
 }
