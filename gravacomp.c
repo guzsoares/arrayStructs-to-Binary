@@ -197,33 +197,31 @@ void mostracomp(FILE * arquivo) {
 
     /*Variaveis para guardar os bytes*/
     unsigned char chari;
-    unsigned char IntBytes[4]; 
     int num = 0;  //int que irá ser printado
     int isPositive;
 
-    //Debug
-    int qualbyteEstou = 0;
-    int gusacoint;
-    unsigned int gusacoU;
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
-    qualbyteEstou++;
+  
     
     printf("Estruturas: %d \n", nstructs);
     
     while (nstructs) {
+      contByte = 0;
+      printf("\n");
         while(!contByte){
           header = fgetc(arquivo); // Segundo byte eh o cabecalho
-          qualbyteEstou ++;
           contByte = structEndCheck(header);
           type = typeCheck(header);
           numBytes = getNumBytes(header,type);
-          unsigned char IntByte[4] = { 0 };
+          unsigned char IntBytes[4] = { 0 };
+          num = 0;
+
           switch (type)
           {
             case 's':
               for (i = 0; i < numBytes ; i++) {
                 chari = fgetc(arquivo);
-                qualbyteEstou++;
+              
                 str[i] = chari;
               }
 
@@ -235,25 +233,24 @@ void mostracomp(FILE * arquivo) {
             case 'i':
               for ( i = 0; i < numBytes; i++) {
                 IntBytes[i] = fgetc(arquivo);  //Pega o proximo char do arquivo
-                qualbyteEstou++;
+              
                 if (i == 0){
                   isPositive = isSigned(IntBytes[0]); //observa o últmo bit para ver se o número é negativo
                 }
                 num = (num << 8) | IntBytes[i]; //Monta o int através do bitshift
               }
-              if (!isPositive){
+              if (isPositive){
                 num = num | (-1<<(8 * numBytes)); //Se o número 
               }
-              printf("(int) %d (%x)\n",num,num);
+              printf("(int) %d (%08x)\n",num,num);
               break;
 
             case 'u':
               for ( i = 0; i < numBytes; i++) {
-
+                IntBytes[i] = fgetc(arquivo);
+                num = (num << 8) | IntBytes[i];
               }
-              printf("estou no u\n");
-              gusacoU = fgetc(arquivo);
-              qualbyteEstou++;
+              printf("(uns) %u (%08x)\n",num,num);
               break;
 
           }
@@ -292,7 +289,7 @@ unsigned char getNumBytes(unsigned char header, char type) {
   return aux;
 }
 int isSigned(unsigned char MostValubleByte){ //Para verificar se o número é positivo ou negativo
-  if((MostValubleByte & (1<<8)) == (1<<8)){
+  if((MostValubleByte & 128) == 128){
     return 1;
   } else {
     return 0;
