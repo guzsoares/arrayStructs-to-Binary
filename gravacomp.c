@@ -27,8 +27,6 @@ char typeCheck(unsigned char header);
 unsigned char getNumBytes(unsigned char header, char type);
 int isSigned(unsigned char MostValubleByte);
 
-// Funcoes para debug
-void dump (void *p, int n);
 
 /***********************************************************************************************************************************************************************************************/
 
@@ -206,7 +204,7 @@ void mostracomp(FILE * arquivo) {
     printf("Estruturas: %d \n", nstructs);
     
     while (nstructs) {
-      contByte = 0;
+      contByte = 0; //Como existe outro struct na fila o contbyte é zerado até o últmo struct onde ele fica como 1
       printf("\n");
         while(!contByte){
           header = fgetc(arquivo); // Segundo byte eh o cabecalho
@@ -271,7 +269,7 @@ char typeCheck(unsigned char header) {
 }
 
 int structEndCheck(unsigned char header) {
-  if ((header & 128) == 128) {
+  if ((header & 128) == 128) {              //128 = 1000 0000
     return 1;
   } else {
     return 0;
@@ -289,19 +287,9 @@ unsigned char getNumBytes(unsigned char header, char type) {
   return aux;
 }
 int isSigned(unsigned char MostValubleByte){ //Para verificar se o número é positivo ou negativo
-  if((MostValubleByte & 128) == 128){
+  if((MostValubleByte & 128) == 128) {        //128 = 1000 0000
     return 1;
   } else {
     return 0;
   }
 }
-
-void dump (void *p, int n) {
-  unsigned char *p1 = p;
-  while (n--) {
-    printf("%p - %02x\n", p1, *p1);
-    p1++;
-  }
-}
-
-  
