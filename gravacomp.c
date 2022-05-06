@@ -145,7 +145,7 @@ unsigned char stringHeader (unsigned char contByte, unsigned char size) { /* Mon
 }
 
 
-static unsigned char sizeUnsigned(unsigned int num) { /* REFAZER FUNCAO PARA TERMOS A NOSSA VERSAO */
+static unsigned char sizeUnsigned(unsigned int num) { 
     char i = 31;
     while (i--){
         if ((num & (1<<i)) == (1<<i))
@@ -159,7 +159,7 @@ static unsigned char sizeUnsigned(unsigned int num) { /* REFAZER FUNCAO PARA TER
         return 3;
     return 4;
 }
-static unsigned char sizeSigned (int num){ /* REFAZER FUNCAO PARA TERMOS A NOSSA VERSAO */
+static unsigned char sizeSigned (int num){ 
     char i = 31;
     if ((num & (1<<i)) == (1<<i)){
         while (i--){
