@@ -10,14 +10,14 @@ void mostracomp(FILE *arquivo);
 
 // Funções para o cabeçalho gravacomp
 
-unsigned char intHeader(unsigned char ContByte, unsigned char size, int isSigned); // Monta o header do int
-unsigned char stringHeader(unsigned char ContByte, unsigned char size); // Monta o header da string
+unsigned char intHeader(unsigned char contByte, unsigned char size, int isSigned); // Monta o header do int
+unsigned char stringHeader(unsigned char contByte, unsigned char size); // Monta o header da string
 
 // Funções auxiliares para gravacomp
 
 static unsigned char sizeSigned(int num); // Calcula a quantidade de bytes real ocupada por um signed
 static unsigned char sizeUnsigned(unsigned int num); // Calcula a quantidade de bytes real ocupada por um unsigned
-unsigned char FixPadding(int pad); // Funcao para calcular quantas casas terao que ser puladas para ir para o proximo elem da struct sem cair no padding
+unsigned char fixPadding(int pad); // Funcao para calcular quantas casas terao que ser puladas para ir para o proximo elem da struct sem cair no padding
 int string2num(char *s); // String to number padrao
 
 // Funcoes auxiliares para mostracomp
@@ -32,83 +32,83 @@ int isSigned(unsigned char MostValubleByte);
 
 int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   
-  int ContaPadding = 0; /* Usado para contar o padding entre os elementos da struct*/
+  int contaPadding = 0; /* Usado para contar o padding entre os elementos da struct*/
   unsigned char aux1; /* unsigned char auxiliar para armazenar os valores no arquivo*/
-  unsigned int ValueUnsigned; // Valor do unsigned
-  int ValueInt; // Valor do signed
-  unsigned char *AuxByte = (unsigned char *)valores; // Transformando a void valores em unsigned char para poder usar aritmetica de ponteiros
-  char char_tamanho[3]; // Usado para calcular o tamanho da string na struct que eh representada da seguinte forma s01
-  unsigned char HeaderMontado; // Header montado para ser inserido no arquivo
-  int tamanho_s = 0; // Tamanho da string do struct
-  unsigned char ContByte; // Indica se eh o ultimo da estrutura
+  unsigned int calueUnsigned; // Valor do unsigned
+  int valueInt; // Valor do signed
+  unsigned char *auxByte = (unsigned char *)valores; // Transformando a void valores em unsigned char para poder usar aritmetica de ponteiros
+  char charSize[3]; // Usado para calcular o tamanho da string na struct que eh representada da seguinte forma s01
+  unsigned char headerMontado; // Header montado para ser inserido no arquivo
+  int tamanhoS = 0; // Tamanho da string do struct
+  unsigned char contByte; // Indica se eh o ultimo da estrutura
   unsigned char sizeByte; // tamanho de bytes real que sao ocupados
 
   fwrite(&nstructs, sizeof(unsigned char), 1, arquivo);  // Primeiro byte indicando o nstructs
   
   while (nstructs) {
     for (int i = 0; i < strlen(descritor); i++) {
-      if (strlen(descritor) == (i+1)) {
-        ContByte = 1;
+      if (strlen(descritor) == (i + 1)) {
+        contByte = 1;
       }
       
       switch (descritor[i]) {
 
           case 's': // Caso seja str
               //definir tamanho da string
-              char_tamanho[0] = descritor[i+1];
-              char_tamanho[1] = descritor[i+2];
-              char_tamanho[2] = '\0';
-              tamanho_s = string2num(char_tamanho);
+              charSize[0] = descritor[i + 1];
+              charSize[1] = descritor[i + 2];
+              charSize[2] = '\0';
+              tamanhoS = string2num(charSize);
               
               // Pegando tamanho que a string ocupa e montando o header
-              sizeByte = strlen((const char*)AuxByte);
-              HeaderMontado = stringHeader(ContByte, sizeByte);
-              fwrite(&HeaderMontado, sizeof(unsigned char), 1, arquivo); // Colocando o header no arqiuvo
+              sizeByte = strlen((const char*)auxByte);
+              headerMontado = stringHeader(contByte, sizeByte);
+              fwrite(&headerMontado, sizeof(unsigned char), 1, arquivo); // Colocando o header no arqiuvo
               
               // adicionando os char no arquivo e calculando o padding para pular para o proximo valor
-              fwrite(AuxByte, sizeof(unsigned char), sizeByte, arquivo);
+              fwrite(auxByte, sizeof(unsigned char), sizeByte, arquivo);
               
-              if (descritor[i-1] != 's') {
-                  ContaPadding = FixPadding(tamanho_s);
-                  AuxByte += ContaPadding;
+              if (descritor[i - 1] != 's') {
+                  contaPadding = fixPadding(tamanhoS);
+                  auxByte += contaPadding;
               } else {
-                  AuxByte += tamanho_s;
+                  auxByte += tamanhoS;
               }
-              ContaPadding = 0;
+              contaPadding = 0;
               i += 2;
               break;
 
           case 'i': // Caso seja int
               
-            ValueInt = *((int*)AuxByte); /* Associando o valor do int a uma variavel */
-            sizeByte =  sizeSigned(ValueInt); /* Tamanho real que o int ocupa */
-            HeaderMontado = intHeader(ContByte, sizeByte, 1); /* Montagem do header */
-            fwrite(&HeaderMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
+            valueInt = *((int*)auxByte); /* Associando o valor do int a uma variavel */
+            sizeByte =  sizeSigned(valueInt); /* Tamanho real que o int ocupa */
+            headerMontado = intHeader(contByte, sizeByte, 1); /* Montagem do header */
+            fwrite(&headerMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
               
             while (sizeByte) {
-              aux1 = ((ValueInt)>>(8*(sizeByte-1))); /* Escrevendo os valores em Big Endian */
+              aux1 = ((valueInt) >> (8*(sizeByte - 1))); /* Escrevendo os valores em Big Endian */
               fwrite(&aux1, sizeof(unsigned char), 1, arquivo);
               sizeByte--;
             }
-            AuxByte += 4; /* Percorrendo os valores do struct*/
+            auxByte += 4; /* Percorrendo os valores do struct*/
             break;
 
           case 'u': /* Caso seja unsigned int */
-            ValueUnsigned = *((unsigned int*)AuxByte); /* Associando o valor do unsigned a uma variavel */
-            sizeByte = sizeUnsigned(ValueUnsigned); /* Tamanho real que o unsigned ocupa */
-            HeaderMontado = intHeader(ContByte, sizeByte, 0); /* Montando o header */
-            fwrite(&HeaderMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
+            calueUnsigned = *((unsigned int*)auxByte); /* Associando o valor do unsigned a uma variavel */
+            sizeByte = sizeUnsigned(calueUnsigned); /* Tamanho real que o unsigned ocupa */
+            headerMontado = intHeader(contByte, sizeByte, 0); /* Montando o header */
+            fwrite(&headerMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
               
             while (sizeByte) {
-              aux1 = ((ValueUnsigned)>>(8*(sizeByte-1))); /* Escrevendo em big endian no arquivo */
+              aux1 = ((calueUnsigned)>>(8*(sizeByte-1))); /* Escrevendo em big endian no arquivo */
               fwrite(&aux1, sizeof(unsigned char), 1, arquivo);
               sizeByte--;
             }
-            AuxByte += 4; /* Percorrendo o ponteiro com os valores do struct */
+            auxByte += 4; /* Percorrendo o ponteiro com os valores do struct */
             break;   
       }
     }
-    ContByte = 0; /* Preparando o ContByte para a proxima struct */
+    contByte = 0; /* Preparando o contByte para a proxima struct */
     nstructs--; /* Avancando na struct */
   }
   return 0;
@@ -122,10 +122,10 @@ int string2num(char *s) { /* Funcao padrao str to num */
   return a;
 }
 
-unsigned char intHeader(unsigned char ContByte, unsigned char size, int IsSigned) { /* Montagem do Header do int*/
+unsigned char intHeader(unsigned char contByte, unsigned char size, int IsSigned) { /* Montagem do Header do int*/
   unsigned char aux = 0; /* Criando um byte 0000 0000 */
   aux = aux | size; /* Colando o byte do size no aux */
-  if (ContByte == 1) { /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
+  if (contByte == 1) { /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
     aux = aux | (1<<7);
   }
   if (IsSigned) { /* Caso seja signed iremos inserir o 1 no quinto bit */
@@ -134,10 +134,10 @@ unsigned char intHeader(unsigned char ContByte, unsigned char size, int IsSigned
   return aux; /* Header montado */
 }
 
-unsigned char stringHeader (unsigned char ContByte, unsigned char size) { /* Montagem do Header do str */
+unsigned char stringHeader (unsigned char contByte, unsigned char size) { /* Montagem do Header do str */
   unsigned char aux = 0; /* Criando um byte 0000 0000 */
   aux = aux | size; /* Colando o byte do size no aux */
-  if (ContByte == 1) { /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
+  if (contByte == 1) { /* Caso seja o ultimo iremos inserir o 1 no setimo bit */
     aux = aux | (1<<7);
   }
   aux = aux | (1<<6); /* Inserindo o 1 no 6 bit pois eh necessario */
@@ -177,7 +177,7 @@ static unsigned char sizeSigned (int num){ /* REFAZER FUNCAO PARA TERMOS A NOSSA
     else return sizeUnsigned (num);
 }
 
-unsigned char FixPadding(int pad) {
+unsigned char fixPadding(int pad) {
     while (pad%4 != 0) { // ENQUANTO O NUMERO NAO FOR DIVISIVEL POR 4 QUE SAO OS BYTES EM UM INT ELE NAO SERA COMPATIVEL, POIS ELE IRA CAIR EM UM PADDING
         pad++;
     }
