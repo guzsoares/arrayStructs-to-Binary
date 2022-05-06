@@ -34,7 +34,7 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   
   int contaPadding = 0; /* Usado para contar o padding entre os elementos da struct*/
   unsigned char aux1; /* unsigned char auxiliar para armazenar os valores no arquivo*/
-  unsigned int calueUnsigned; // Valor do unsigned
+  unsigned int valueUnsigned; // Valor do unsigned
   int valueInt; // Valor do signed
   unsigned char *auxByte = (unsigned char *)valores; // Transformando a void valores em unsigned char para poder usar aritmetica de ponteiros
   char charSize[3]; // Usado para calcular o tamanho da string na struct que eh representada da seguinte forma s01
@@ -94,13 +94,13 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
             break;
 
           case 'u': /* Caso seja unsigned int */
-            calueUnsigned = *((unsigned int*)auxByte); /* Associando o valor do unsigned a uma variavel */
-            sizeByte = sizeUnsigned(calueUnsigned); /* Tamanho real que o unsigned ocupa */
+            valueUnsigned = *((unsigned int*)auxByte); /* Associando o valor do unsigned a uma variavel */
+            sizeByte = sizeUnsigned(valueUnsigned); /* Tamanho real que o unsigned ocupa */
             headerMontado = intHeader(contByte, sizeByte, 0); /* Montando o header */
             fwrite(&headerMontado, sizeof(unsigned char), 1, arquivo); /* Colocando o header no arquivo */
               
             while (sizeByte) {
-              aux1 = ((calueUnsigned)>>(8*(sizeByte-1))); /* Escrevendo em big endian no arquivo */
+              aux1 = ((valueUnsigned)>>(8*(sizeByte-1))); /* Escrevendo em big endian no arquivo */
               fwrite(&aux1, sizeof(unsigned char), 1, arquivo);
               sizeByte--;
             }
