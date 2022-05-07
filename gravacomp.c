@@ -68,9 +68,9 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
               // adicionando os char no arquivo e calculando o padding para pular para o proximo valor
               fwrite(auxByte, sizeof(unsigned char), sizeByte, arquivo);
               
-              if (descritor[i - 1] != 's') {
+              if (descritor[i + 3] != 's') {
                   contaPadding = fixPadding(tamanhoS);
-                  auxByte += contaPadding;
+                  auxByte += contaPadding; //conta os padding no struct
               } else {
                   auxByte += tamanhoS;
               }
