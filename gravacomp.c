@@ -115,6 +115,7 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
 }
 
 
+
 int string2num(char *s) { /* Funcao padrao str to num */
   int a = 0;
   for (; *s; s++)
