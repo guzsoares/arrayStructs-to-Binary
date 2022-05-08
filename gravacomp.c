@@ -19,6 +19,7 @@ static unsigned char sizeSigned(int num); // Calcula a quantidade de bytes real 
 static unsigned char sizeUnsigned(unsigned int num); // Calcula a quantidade de bytes real ocupada por um unsigned
 unsigned char fixPadding(int pad); // Funcao para calcular quantas casas terao que ser puladas para ir para o proximo elem da struct sem cair no padding
 int string2num(char *s); // String to number padrao
+int alinhamentoAuxByte(unsigned char *origin, unsigned char *ptr);
 
 // Funcoes auxiliares para mostracomp
 
@@ -42,6 +43,8 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   int tamanhoS = 0; // Tamanho da string do struct
   unsigned char contByte; // Indica se eh o ultimo da estrutura
   unsigned char sizeByte; // tamanho de bytes real que sao ocupados
+  unsigned char *originAddress = auxByte; //Copia o endereço inicial de auxByte
+  int positionStruct;
 
   fwrite(&nstructs, sizeof(unsigned char), 1, arquivo);  // Primeiro byte indicando o nstructs
   
@@ -67,19 +70,23 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
               
               // adicionando os char no arquivo e calculando o padding para pular para o proximo valor
               fwrite(auxByte, sizeof(unsigned char), sizeByte, arquivo);
-              
-              if (descritor[i - 1] != 's') {
+              /*
+              if (descritor[i + 3] != 's') {
                   contaPadding = fixPadding(tamanhoS);
-                  auxByte += contaPadding;
+                  auxByte += contaPadding; //conta os padding no struct
               } else {
                   auxByte += tamanhoS;
-              }
+              }*/
+              auxByte += tamanhoS;
               contaPadding = 0;
               i += 2;
               break;
 
           case 'i': // Caso seja int
-              
+            positionStruct = alinhamentoAuxByte(originAddress, auxByte);
+            auxByte = auxByte + fixPadding(positionStruct);
+
+
             valueInt = *((int*)auxByte); /* Associando o valor do int a uma variavel */
             sizeByte =  sizeSigned(valueInt); /* Tamanho real que o int ocupa */
             headerMontado = intHeader(contByte, sizeByte, 1); /* Montagem do header */
@@ -94,6 +101,9 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
             break;
 
           case 'u': /* Caso seja unsigned int */
+            positionStruct = alinhamentoAuxByte(originAddress, auxByte);
+            auxByte = auxByte + fixPadding(positionStruct);
+
             valueUnsigned = *((unsigned int*)auxByte); /* Associando o valor do unsigned a uma variavel */
             sizeByte = sizeUnsigned(valueUnsigned); /* Tamanho real que o unsigned ocupa */
             headerMontado = intHeader(contByte, sizeByte, 0); /* Montando o header */
@@ -112,6 +122,14 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
     nstructs--; /* Avancando na struct */
   }
   return 0;
+}
+
+int alinhamentoAuxByte(unsigned char *origin, unsigned char *ptr){
+  if (origin == ptr){
+    return 0;
+  }
+  int diff = ptr - origin;
+  return diff;
 }
 
 
@@ -178,10 +196,15 @@ static unsigned char sizeSigned (int num){
 }
 
 unsigned char fixPadding(int pad) {
+    int soma = 0;
+    if (pad == 0) {
+        return soma;
+    }
     while (pad%4 != 0) { // ENQUANTO O NUMERO NAO FOR DIVISIVEL POR 4 QUE SAO OS BYTES EM UM INT ELE NAO SERA COMPATIVEL, POIS ELE IRA CAIR EM UM PADDING
         pad++;
+        soma++;
     }
-    return pad;
+    return soma;
 }
 
 void mostracomp(FILE * arquivo) {
