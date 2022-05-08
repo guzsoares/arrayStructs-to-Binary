@@ -1,3 +1,6 @@
+/*Lucca Vieira Rocha 2011342 3WA*/
+/*Gustavo Molina Soares 2020209 3WA*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +36,6 @@ int isSigned(unsigned char MostValubleByte);
 
 int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   
-  int contaPadding = 0; /* Usado para contar o padding entre os elementos da struct*/
   unsigned char aux1; /* unsigned char auxiliar para armazenar os valores no arquivo*/
   unsigned int valueUnsigned; // Valor do unsigned
   int valueInt; // Valor do signed
@@ -50,9 +52,13 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   
   while (nstructs) {
     for (int i = 0; i < strlen(descritor); i++) {
-      if (strlen(descritor) == (i + 1)) {
+      if (strlen(descritor) == (i + 1)) { //Detecta se é o último elemento no caso 'i' e 'u'
         contByte = 1;
       }
+      else if ((descritor[i] == 's') && (strlen(descritor) - i) == 3) { //Detecta se é o último elemento no caso 's'
+        contByte = 1;
+      }
+      
       
       switch (descritor[i]) {
 
@@ -70,20 +76,16 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
               
               // adicionando os char no arquivo e calculando o padding para pular para o proximo valor
               fwrite(auxByte, sizeof(unsigned char), sizeByte, arquivo);
-              /*
-              if (descritor[i + 3] != 's') {
-                  contaPadding = fixPadding(tamanhoS);
-                  auxByte += contaPadding; //conta os padding no struct
-              } else {
-                  auxByte += tamanhoS;
-              }*/
+              
+              //Avança os bytes do struct no tamanho do tamanhoS
               auxByte += tamanhoS;
-              contaPadding = 0;
               i += 2;
               break;
 
           case 'i': // Caso seja int
+            //Para realizar o alinhamento eu calculei a posição do byte atual no programa 
             positionStruct = alinhamentoAuxByte(originAddress, auxByte);
+            //E passei pelo fixPadding para adicionar o padding necessário e alinhar o auxByte
             auxByte = auxByte + fixPadding(positionStruct);
 
 
@@ -101,7 +103,9 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
             break;
 
           case 'u': /* Caso seja unsigned int */
+            //Para realizar o alinhamento eu calculei a posição do byte atual no programa 
             positionStruct = alinhamentoAuxByte(originAddress, auxByte);
+            //E passei pelo fixPadding para adicionar o padding necessário e alinhar o auxByte
             auxByte = auxByte + fixPadding(positionStruct);
 
             valueUnsigned = *((unsigned int*)auxByte); /* Associando o valor do unsigned a uma variavel */
@@ -124,7 +128,7 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
   return 0;
 }
 
-int alinhamentoAuxByte(unsigned char *origin, unsigned char *ptr){
+int alinhamentoAuxByte(unsigned char *origin, unsigned char *ptr){  //Calula a posição do ptr em relação a sua origem
   if (origin == ptr){
     return 0;
   }
@@ -163,7 +167,7 @@ unsigned char stringHeader (unsigned char contByte, unsigned char size) { /* Mon
 }
 
 
-static unsigned char sizeUnsigned(unsigned int num) { 
+static unsigned char sizeUnsigned(unsigned int num) { //Retorna o tamanho real de um unsigned int
     char i = 31;
     while (i--){
         if ((num & (1<<i)) == (1<<i))
@@ -177,7 +181,7 @@ static unsigned char sizeUnsigned(unsigned int num) {
         return 3;
     return 4;
 }
-static unsigned char sizeSigned (int num){ 
+static unsigned char sizeSigned (int num){ //Retorna o tamanho real de um int
     char i = 31;
     if ((num & (1<<i)) == (1<<i)){
         while (i--){
@@ -242,7 +246,7 @@ void mostracomp(FILE * arquivo) {
             case 's':
               for (i = 0; i < numBytes ; i++) {
                 chari = fgetc(arquivo);
-              
+                //monta a string de acordo com cada byte no arquivo
                 str[i] = chari;
               }
 
