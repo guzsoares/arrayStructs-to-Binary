@@ -6,10 +6,7 @@
 struct teste1 {
     int  i1;
     char s1[5];
-<<<<<<< Updated upstream
     char s2[3];
-=======
->>>>>>> Stashed changes
     unsigned int u1;
 }Teste1[2] = {{-1,"abc", "f",258},{1,"ABCD", "kk",65535}};
 
@@ -45,9 +42,7 @@ struct teste5 {
 int main(void){
     FILE * arquivo;
     arquivo = fopen("arquivo.bin","wb");
-<<<<<<< Updated upstream
-    gravacomp(2, &Teste1, "is05s03u",arquivo);
-=======
+    //gravacomp(2, &Teste1, "is05s03u",arquivo);
 	/* TESTES */
   /*gravacomp(2, &Teste2, "is05u",arquivo);  // PASS
     gravacomp(2, &Teste2, "is08s03u",arquivo); // PASS
@@ -55,7 +50,6 @@ int main(void){
 	gravacomp(2, &Teste4, "iiii",arquivo);*/ // PASS
 	gravacomp(2, &Teste5, "is05s03",arquivo);  // ARRUMAR CASO 5
 
->>>>>>> Stashed changes
     fclose(arquivo);
     arquivo = fopen("arquivo.bin","rb");
     mostracomp(arquivo);
