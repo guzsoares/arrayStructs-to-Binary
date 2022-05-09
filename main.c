@@ -47,9 +47,9 @@ int main(void){
   /*gravacomp(2, &Teste2, "is05u",arquivo);  // PASS
     gravacomp(2, &Teste2, "is08s03u",arquivo); // PASS
 	gravacomp(3, &Teste3, "s05is12s06u",arquivo); // PASS
-	gravacomp(2, &Teste4, "iiii",arquivo);*/ // PASS
-	gravacomp(2, &Teste5, "is05s03",arquivo);  // ARRUMAR CASO 5
-
+	gravacomp(2, &Teste4, "iiii",arquivo); // PASS
+	gravacomp(2, &Teste5, "is05s03",arquivo); */ // PASS
+    gravacomp(2, &Teste2, "is08s03u",arquivo);
     fclose(arquivo);
     arquivo = fopen("arquivo.bin","rb");
     mostracomp(arquivo);

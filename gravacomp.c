@@ -167,21 +167,19 @@ unsigned char stringHeader (unsigned char contByte, unsigned char size) { /* Mon
 }
 
 
-static unsigned char sizeUnsigned(unsigned int num) { //Retorna o tamanho real de um unsigned int
-    char i = 31;
-    while (i--){
-        if ((num & (1<<i)) == (1<<i))
-            break;
+unsigned char sizeUnsigned(unsigned int num){
+  int bytes = 0;
+  int i = 0;
+  int j = 0;
+  for(j = 0; j<4;j++){
+    if((num >> i) != 0){
+      bytes++;
     }
-    if (i<8)
-        return 1;
-    else if (i<16)
-        return 2;
-    else if (i<24)
-        return 3;
-    return 4;
+    i+=8;
+  }
+  return bytes;
 }
-static unsigned char sizeSigned (int num){ //Retorna o tamanho real de um int
+unsigned char sizeSigned (int num){ //Retorna o tamanho real de um int
     char i = 31;
     if ((num & (1<<i)) == (1<<i)){
         while (i--){
