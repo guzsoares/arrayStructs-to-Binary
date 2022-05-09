@@ -70,7 +70,7 @@ int gravacomp(int nstructs, void *valores, char *descritor, FILE *arquivo){
               tamanhoS = string2num(charSize);
               
               // Pegando tamanho que a string ocupa e montando o header
-              sizeByte = strlen((const char*)auxByte);
+              sizeByte = strlen((char*)auxByte);
               headerMontado = stringHeader(contByte, sizeByte);
               fwrite(&headerMontado, sizeof(unsigned char), 1, arquivo); // Colocando o header no arqiuvo
               
