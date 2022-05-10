@@ -203,6 +203,15 @@ unsigned char sizeSigned (int num){ //Retorna o tamanho real de um int
     if(num == 0){
       return 1;
     }
+    if(num>=128 && num<=255){
+		  return 2;
+	  }
+    if(num>=32768 && num<=65535){
+      return 3;
+    }
+    if(num >= 8388608 && num<= ((8388608*2)-1)){
+      return 4;
+    }
     if (num < 0) {
         while (i--){
             if ((num & (1<<i)) != (1<<i))
@@ -253,7 +262,7 @@ void mostracomp(FILE * arquivo) {
     /*Variaveis para guardar os bytes*/
     unsigned char chari;
     int num = 0;  //int que irá ser printado
-    int isPositive;
+    int isNegative;
 
     nstructs = fgetc(arquivo); // Primeiro byte representa o numero de estruturas
   
@@ -290,12 +299,12 @@ void mostracomp(FILE * arquivo) {
                 IntBytes[i] = fgetc(arquivo);  //Pega o proximo char do arquivo
               
                 if (i == 0){
-                  isPositive = isSigned(IntBytes[0]); //observa o últmo bit para ver se o número é negativo
+                  isNegative = isSigned(IntBytes[0]); //observa o últmo bit para ver se o número é negativo
                 }
                 num = (num << 8) | IntBytes[i]; //Monta o int através do bitshift
               }
-              if (isPositive){
-                num = num | (-1<<(8 * numBytes)); //Se o número 
+              if (isNegative){
+                num = num | (-1<<(8 * numBytes)); //Se o número for negativo as casas na esquerda viram 1
               }
               printf("(int) %d (%08x)\n",num,num);
               break;
