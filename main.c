@@ -15,7 +15,7 @@ struct teste2 {
     char s1[8];
 	char s2[3];
     unsigned int u1;
-}Teste2[2] = {{-35,"abc","ax",258},{1,"ABCD","av",65535}};
+}Teste2[2] = {{0,"abc","ax",0},{1,"ABCD","av",65535}};
 
 struct teste3 {
 	char s3[5];
@@ -44,12 +44,12 @@ int main(void){
     arquivo = fopen("arquivo.bin","wb");
     //gravacomp(2, &Teste1, "is05s03u",arquivo);
 	/* TESTES */
-  /*gravacomp(2, &Teste2, "is05u",arquivo);  // PASS
-    gravacomp(2, &Teste2, "is08s03u",arquivo); // PASS
-	gravacomp(3, &Teste3, "s05is12s06u",arquivo); // PASS
+    //gravacomp(2, &Teste2, "is05u",arquivo);  // PASS
+    //gravacomp(2, &Teste2, "is08s03u",arquivo); // PASS
+	//gravacomp(3, &Teste3, "s05is12s06u",arquivo); // PASS
 	gravacomp(2, &Teste4, "iiii",arquivo); // PASS
-	gravacomp(2, &Teste5, "is05s03",arquivo); */ // PASS
-    gravacomp(2, &Teste2, "is08s03u",arquivo);
+	//gravacomp(2, &Teste5, "is05s03",arquivo);  // PASS
+    //gravacomp(2, &Teste2, "is08s03u",arquivo);
     fclose(arquivo);
     arquivo = fopen("arquivo.bin","rb");
     mostracomp(arquivo);

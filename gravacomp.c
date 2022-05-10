@@ -199,24 +199,35 @@ unsigned char sizeUnsigned(unsigned int num){
 }
 unsigned char sizeSigned (int num){ //Retorna o tamanho real de um int
     char i = 31;
+	int bytes = 0;
     if(num == 0){
       return 1;
     }
-    if ((num & (1<<i)) == (1<<i)){
+    if (num < 0) {
         while (i--){
             if ((num & (1<<i)) != (1<<i))
                 break;
         }
-        if (i<7)
-            return 1;
-        else if (i<15)
-            return 2;
-        else if (i<23)
-            return 3;
-        return 4;
+        if (i<7) {
+			bytes = 1;
+            return bytes;
+		}
+        else if (i<15) {
+			bytes = 2;
+            return bytes;
+		}
+        else if (i<23) {
+			bytes = 3;
+            return bytes;
+		}
+		bytes = 4;
+        return bytes;
     }
-    else return sizeUnsigned (num);
+	else {
+		return sizeUnsigned(num);
+	}
 }
+
 
 unsigned char fixPadding(int pad) {
     int soma = 0;
