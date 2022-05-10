@@ -21,14 +21,14 @@ a ser armazenado em arquivo
 
 A string **`descritor`** representa o tipo de cada um dos campos das structs (na ordem correeta), conforme abaixo:
 
-```c
+```
     's' - string (char [])
     'u' - inteiro sem sinal (unsigned int)
     'i' - inteiro com sinal (signed int)
 ```
 Para campos do tipo *string*, deve-se indicar o tamanho do array, **sempre com dois dígitos**. O tamanho máximo das *strings* armazenadas nas estruturas, por restrição imposta pelo formato do arquivo (como veremos mais adiante), é 63, descontado o marcador de fim (`\0`). Portanto, o tamanho máximo do array é limitado a 64.
 Por exemplo, dada a declaração:
-```
+```c
   struct s {
     int  i1, i2;
     char s1[3];
