@@ -1,6 +1,8 @@
 # T1-software-basico
 Trabalho 1 de software básico PUC-Rio
 
+Nota final: 10/10
+
 ## Armazenamento compactado
 
 O objetivo do trabalho é implementar, na linguagem C, uma função (**`gravacomp`**) que armazena um array de structs em um arquivo binário de forma compactada e uma função (**`mostracomp`**) que permite visualizar um arquivo gerado por **`gravacomp`** na saída padrão (terminal).
