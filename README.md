@@ -3,7 +3,7 @@ Trabalho 1 de software básico PUC-Rio
 
 Nota final: 10/10
 
-Autores:    Gustavo Molina Soares
+Autores:    Gustavo Molina Soares,
             Lucca Vieira Rocha
 
 ## Armazenamento compactado
